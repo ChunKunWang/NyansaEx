@@ -18,7 +18,7 @@ Input file: 213,480 Lines in total
 
 Run: run 10 times and have an average
 
-Sampel output:
+Sample output:
 
 classroom(93)% time ./urlSummary ./test.txt
 08/08/2014 GMT
