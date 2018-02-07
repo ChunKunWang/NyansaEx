@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <ctime>
+#include <unordered_map>
 #include <map>
 #include <vector>
 #include <algorithm>
@@ -54,37 +55,38 @@ int main(int argc, char *argv[])
     return -1;
 
   ifstream inFile (inFileName.c_str());
-  map<long, map<string, int>> dateUrlMap;
+  unordered_map<string, unordered_map<string, int>> dateUrlMap;
 
   // open input file
   if (inFile.is_open()) {
     string line;
 
     // parse input data into map table
-    // N number of total input line
+    // All lines: O(N)
     while (getline(inFile, line)) {
       dataEntry entry;
       entry.parseLine(line);
-      dateUrlMap[stol(entry.getDate())][entry.getUrl()]++; // O(log N) insertion time
+      dateUrlMap[entry.getDate()][entry.getUrl()]++; // Insert: O(1)
     }
     inFile.close();
   }
   else cout << "Open file fail!" << endl;
 
   // report url summary
-  for (auto entry : dateUrlMap) {
-    string Date = to_string(entry.first);
-    cout << Date.substr(4, 2) << "/" 
-         << Date.substr(6, 2) << "/" 
-         << Date.substr(0, 4) << " GMT" << endl;
+  // sort by the date
+  map<string, unordered_map<string, int>> ordered(dateUrlMap.begin(), dateUrlMap.end());
+  for (auto entry: ordered) {
+    string Date = entry.first;
+    cout << Date.substr(4, 2) << "/"
+      << Date.substr(6, 2) << "/"
+      << Date.substr(0, 4) << " GMT" << endl;
 
-    // sort the urls by hit count
+    // sort by url hit count
     vector<pair<string, int>> v;
     for (auto url : entry.second) 
       v.push_back(make_pair(url.first, url.second));
 
     sort(v.begin(), v.end(), [](auto p1, auto p2){return p1.second > p2.second;});
-
     for (auto p : v)
       cout << p.first << " " << p.second << endl;
   }
