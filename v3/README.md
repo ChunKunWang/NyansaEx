@@ -8,6 +8,8 @@ E-mail: wckamos@gmail.com
 
 Based on the statement - the cardinality of hit count values and the number of days are much smaller than the number of unique URLs -, we optimize our porgram by replacing *map* into *unordered_map* and also adopting *string* key. According to our experiment results, this version is the fastest one.
 
+Note: v4 has an optimized version and runs faster than this version.
+
 ## Time Complexity
 
 Unlike *map* taking O(log N) to insert, the insertion of *unordered_map* has O(1) in average case. Since we have N number of input lines, the total time complexity of building hash table is O(N).

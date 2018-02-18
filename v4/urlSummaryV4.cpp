@@ -73,22 +73,31 @@ int main(int argc, char *argv[])
   else cout << "Open file fail!" << endl;
 
   // report url summary
-  // sort by the date
+  // sort by dates: O(K*log K) where K is the number of days
   map<string, unordered_map<string, int>> ordered(dateUrlMap.begin(), dateUrlMap.end());
+
+  // sort by the hit coun valuet
   for (auto entry: ordered) {
     string Date = entry.first;
     cout << Date.substr(4, 2) << "/"
       << Date.substr(6, 2) << "/"
       << Date.substr(0, 4) << " GMT" << endl;
 
-    // sort by url hit count
-    vector<pair<string, int>> v;
-    for (auto url : entry.second) 
-      v.push_back(make_pair(url.first, url.second));
+    // Bucketsort: O(N)
+    int num = 0;
+    for (auto url : entry.second)
+      num = max(num, url.second);
+    if (num < 1) continue;
 
-    sort(v.begin(), v.end(), [](auto p1, auto p2){return p1.second > p2.second;});
-    for (auto p : v)
-      cout << p.first << " " << p.second << endl;
+    vector<vector<string>> bucket(num + 1);
+    for (auto url : entry.second)
+      bucket[url.second].push_back(url.first); 
+    
+    for (int i = num; i > 0; i--) {
+      if (bucket[i].empty()) continue;
+      for (auto p : bucket[i])
+        cout << p << " " << i << endl;
+    }
   }
 
   return 0;
